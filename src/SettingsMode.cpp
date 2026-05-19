@@ -104,6 +104,13 @@ namespace SettingsMode {
     return true;
   }
 
+  bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage) {
+    return true;  // stub: will be filled in Task 2
+  }
+  bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage) {
+    return true;  // stub
+  }
+
   int getRepeatCount() { return repeatCount; }
   int getBrightness() { return brightness; }
   bool getBuzzerEnabled() { return buzzerEnabled; }

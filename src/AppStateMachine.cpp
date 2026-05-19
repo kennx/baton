@@ -16,7 +16,8 @@ void AppStateMachine::begin() {
 
 void AppStateMachine::update() {
   M5.update();
-  checkButton();
+  checkBtnA();
+  checkBtnB();
 
   switch (state_) {
     case AppState::MAIN_MENU:
@@ -61,30 +62,47 @@ void AppStateMachine::changeState(AppState newState) {
   }
 }
 
-void AppStateMachine::checkButton() {
+void AppStateMachine::checkBtnA() {
   bool pressed = M5.BtnA.isPressed();
-
   if (pressed && !btnWasPressed_) {
     btnWasPressed_ = true;
     btnPressStart_ = millis();
     longPressHandled_ = false;
   }
-
   if (!pressed && btnWasPressed_) {
     btnWasPressed_ = false;
     if (!longPressHandled_ && (millis() - btnPressStart_ < LONG_PRESS_MS)) {
-      isShortPress();
+      onBtnAShortPress();
     }
   }
-
   if (btnWasPressed_ && !longPressHandled_ &&
       (millis() - btnPressStart_ >= LONG_PRESS_MS)) {
     longPressHandled_ = true;
-    isLongPress();
+    onBtnALongPress();
   }
 }
 
-bool AppStateMachine::isShortPress() {
+void AppStateMachine::checkBtnB() {
+  bool pressed = M5.BtnB.isPressed();
+  if (pressed && !btnBWasPressed_) {
+    btnBWasPressed_ = true;
+    btnBPressStart_ = millis();
+    btnBLongHandled_ = false;
+  }
+  if (!pressed && btnBWasPressed_) {
+    btnBWasPressed_ = false;
+    if (!btnBLongHandled_ && (millis() - btnBPressStart_ < LONG_PRESS_MS)) {
+      onBtnBShortPress();
+    }
+  }
+  if (btnBWasPressed_ && !btnBLongHandled_ &&
+      (millis() - btnBPressStart_ >= LONG_PRESS_MS)) {
+    btnBLongHandled_ = true;
+    onBtnBLongPress();
+  }
+}
+
+void AppStateMachine::onBtnAShortPress() {
   switch (state_) {
     case AppState::MAIN_MENU:
       menuIndex_ = (menuIndex_ + 1) % MENU_COUNT;
@@ -103,10 +121,9 @@ bool AppStateMachine::isShortPress() {
       SettingsMode::onShortPress(ui_, storage_);
       break;
   }
-  return true;
 }
 
-bool AppStateMachine::isLongPress() {
+void AppStateMachine::onBtnALongPress() {
   switch (state_) {
     case AppState::MAIN_MENU:
       changeState(static_cast<AppState>(static_cast<int>(AppState::SCAN_MODE) + menuIndex_));
@@ -132,7 +149,44 @@ bool AppStateMachine::isLongPress() {
       }
       break;
   }
-  return true;
+}
+
+void AppStateMachine::onBtnBShortPress() {
+  bool returnToMenu = false;
+  switch (state_) {
+    case AppState::SCAN_MODE:
+      returnToMenu = ScanMode::onBtnBShortPress(ui_, storage_, ir_);
+      break;
+    case AppState::CONTROL_MODE:
+      returnToMenu = ControlMode::onBtnBShortPress(ui_, storage_);
+      break;
+    case AppState::SIGNAL_MANAGER:
+      returnToMenu = SignalManager::onBtnBShortPress(ui_, storage_);
+      break;
+    case AppState::SETTINGS:
+      returnToMenu = SettingsMode::onBtnBShortPress(ui_, storage_);
+      break;
+  }
+  if (returnToMenu) changeState(AppState::MAIN_MENU);
+}
+
+void AppStateMachine::onBtnBLongPress() {
+  bool returnToMenu = false;
+  switch (state_) {
+    case AppState::SCAN_MODE:
+      returnToMenu = ScanMode::onBtnBLongPress(ui_, storage_, ir_);
+      break;
+    case AppState::CONTROL_MODE:
+      returnToMenu = ControlMode::onBtnBLongPress(ui_, storage_);
+      break;
+    case AppState::SIGNAL_MANAGER:
+      returnToMenu = SignalManager::onBtnBLongPress(ui_, storage_);
+      break;
+    case AppState::SETTINGS:
+      returnToMenu = SettingsMode::onBtnBLongPress(ui_, storage_);
+      break;
+  }
+  if (returnToMenu) changeState(AppState::MAIN_MENU);
 }
 
 void AppStateMachine::drawMainMenu() {

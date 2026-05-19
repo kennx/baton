@@ -75,4 +75,13 @@ namespace ScanMode {
     return true;  // BackMENU
   }
 
+  bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage, IRController& ir) {
+    ir.disableReceive();
+    return true;
+  }
+  bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage, IRController& ir) {
+    ir.disableReceive();
+    return true;
+  }
+
 }

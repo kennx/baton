@@ -204,4 +204,11 @@ namespace SignalManager {
     return true;
   }
 
+  bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage) {
+    return true;  // stub: will be filled in Task 3
+  }
+  bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage) {
+    return true;  // stub
+  }
+
 }

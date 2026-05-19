@@ -32,6 +32,10 @@ private:
   unsigned long btnPressStart_ = 0;
   bool longPressHandled_ = false;
 
+  bool btnBWasPressed_ = false;
+  unsigned long btnBPressStart_ = 0;
+  bool btnBLongHandled_ = false;
+
   static constexpr const char* MENU_ITEMS[] = {"Scan", "Ctrl", "Mgmt", "Set"};
   static constexpr int MENU_COUNT = 4;
   int menuIndex_ = 0;
@@ -42,8 +46,11 @@ private:
   void handleSignalManager();
   void handleSettings();
 
-  void checkButton();
-  bool isShortPress();
-  bool isLongPress();
+  void checkBtnA();
+  void checkBtnB();
+  void onBtnAShortPress();
+  void onBtnALongPress();
+  void onBtnBShortPress();
+  void onBtnBLongPress();
   void drawMainMenu();
 };
