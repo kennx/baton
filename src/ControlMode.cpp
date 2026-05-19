@@ -137,10 +137,22 @@ namespace ControlMode {
   }
 
   bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub: will be filled in Task 3
+    if (subState == CtrlSubState::LIST) {
+      return true;  // back to main menu
+    } else if (subState == CtrlSubState::CATEGORY_SELECT) {
+      subState = CtrlSubState::LIST;
+      selectedIndex = 0;
+      drawList(ui, storage);
+      return false;
+    } else if (subState == CtrlSubState::SENDING) {
+      subState = CtrlSubState::LIST;
+      drawList(ui, storage);
+      return false;
+    }
+    return true;
   }
   bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub
+    return true;  // always back to main menu
   }
 
 }

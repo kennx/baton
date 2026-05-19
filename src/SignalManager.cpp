@@ -205,10 +205,37 @@ namespace SignalManager {
   }
 
   bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub: will be filled in Task 3
+    if (subState == MgrSubState::SIGNAL_LIST) {
+      return true;  // back to main menu
+    } else if (subState == MgrSubState::ACTION_MENU) {
+      subState = MgrSubState::SIGNAL_LIST;
+      drawSignalList(ui, storage);
+      return false;
+    } else if (subState == MgrSubState::RENAME_CATEGORY) {
+      subState = MgrSubState::ACTION_MENU;
+      drawActionMenu(ui, storage);
+      return false;
+    } else if (subState == MgrSubState::RENAME_NAME) {
+      subState = MgrSubState::RENAME_CATEGORY;
+      drawRenameCategory(ui, storage);
+      return false;
+    } else if (subState == MgrSubState::CATEGORY_SELECT) {
+      subState = MgrSubState::ACTION_MENU;
+      drawActionMenu(ui, storage);
+      return false;
+    } else if (subState == MgrSubState::DELETE_CONFIRM) {
+      subState = MgrSubState::ACTION_MENU;
+      drawActionMenu(ui, storage);
+      return false;
+    } else if (subState == MgrSubState::RAW_DATA) {
+      subState = MgrSubState::SIGNAL_LIST;
+      drawSignalList(ui, storage);
+      return false;
+    }
+    return true;
   }
   bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub
+    return true;  // always back to main menu
   }
 
 }
