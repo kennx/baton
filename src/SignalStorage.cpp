@@ -58,7 +58,7 @@ bool SignalStorage::addSignal(const Signal& signal) {
     s.name = generateNextName();
   }
   if (s.category.empty()) {
-    s.category = "未分类";
+    s.category = "Uncat";
   }
 
 #ifndef UNIT_TEST

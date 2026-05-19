@@ -11,14 +11,14 @@ namespace {
   int renameNameIndex = 0;
   int deleteOption = 0;
 
-  const std::vector<std::string> ACTIONS = {"重命名", "归类到文件夹", "删除信号", "查看原始数据", "返回"};
-  const std::vector<std::string> RENAME_CATS = {"电视", "空调", "风扇", "机顶盒", "自定义"};
+  const std::vector<std::string> ACTIONS = {"Rename", "Categorize", "Delete", "Raw data", "Back"};
+  const std::vector<std::string> RENAME_CATS = {"TV", "AC", "FAN", "STB", "Custom"};
 
-  const std::vector<std::string> TV_NAMES = {"电源", "音量+", "音量-", "频道+", "频道-", "静音", "菜单", "上", "下", "左", "右", "确认", "返回"};
-  const std::vector<std::string> AC_NAMES = {"电源", "制冷", "制热", "除湿", "自动", "升温", "降温", "风速", "扫风", "定时"};
-  const std::vector<std::string> FAN_NAMES = {"电源", "风速", "摇头", "定时"};
-  const std::vector<std::string> STB_NAMES = {"电源", "菜单", "回看", "直播", "上", "下", "左", "右", "确认", "返回"};
-  const std::vector<std::string> CUSTOM_NAMES = {"自定义-01", "自定义-02", "自定义-03", "自定义-04", "自定义-05"};
+  const std::vector<std::string> TV_NAMES = {"Power", "Vol+", "Vol-", "CH+", "CH-", "Mute", "Menu", "Up", "Down", "Left", "Right", "OK", "Back"};
+  const std::vector<std::string> AC_NAMES = {"Power", "Cool", "Heat", "Dry", "Auto", "Temp+", "Temp-", "Fan", "Swing", "Timer"};
+  const std::vector<std::string> FAN_NAMES = {"Power", "Fan", "Osc", "Timer"};
+  const std::vector<std::string> STB_NAMES = {"Power", "Menu", "Back", "Live", "Up", "Down", "Left", "Right", "OK", "Back"};
+  const std::vector<std::string> CUSTOM_NAMES = {"Custom-01", "Custom-02", "Custom-03", "Custom-04", "Custom-05"};
 
   const std::vector<std::string>* currentNameList = &TV_NAMES;
 
@@ -35,56 +35,56 @@ namespace {
       items.push_back(s.name + " [" + s.category + "]");
     }
     if (items.empty()) {
-      items.push_back("(无信号)");
+      items.push_back("(no signal)");
     }
-    ui.drawStatusBar("🔋", storage.getCount(), "📁管理");
-    ui.drawMenu(items, signalIndex, "选择信号");
-    ui.drawFooter("短按:下选 长按:管理");
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]MGMT");
+    ui.drawMenu(items, signalIndex, "Pick signal");
+    ui.drawFooter("Short:NXT Long:MGMT");
   }
 
   void drawActionMenu(UIScreen& ui, SignalStorage& storage) {
     std::string title = signals[signalIndex].name;
-    ui.drawStatusBar("🔋", storage.getCount(), "📁管理");
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]MGMT");
     ui.drawMenu(ACTIONS, actionIndex, title);
-    ui.drawFooter("短按:下选 长按:确认");
+    ui.drawFooter("Short:NXT Long:OK");
   }
 
   void drawRenameCategory(UIScreen& ui, SignalStorage& storage) {
-    ui.drawStatusBar("🔋", storage.getCount(), "📁重命名");
-    ui.drawMenu(RENAME_CATS, renameCatIndex, "选择分类");
-    ui.drawFooter("短按:下选 长按:确认");
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]Rename");
+    ui.drawMenu(RENAME_CATS, renameCatIndex, "Pick category");
+    ui.drawFooter("Short:NXT Long:OK");
   }
 
   void drawRenameName(UIScreen& ui, SignalStorage& storage) {
-    ui.drawStatusBar("🔋", storage.getCount(), "📁重命名");
-    ui.drawMenu(*currentNameList, renameNameIndex, "选择名称");
-    ui.drawFooter("短按:下选 长按:确认");
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]Rename");
+    ui.drawMenu(*currentNameList, renameNameIndex, "Pick name");
+    ui.drawFooter("Short:NXT Long:OK");
   }
 
   void drawCategorySelect(UIScreen& ui, SignalStorage& storage) {
-    std::vector<std::string> cats = {"电视", "空调", "风扇", "机顶盒", "未分类"};
-    ui.drawStatusBar("🔋", storage.getCount(), "📁归类");
-    ui.drawMenu(cats, renameCatIndex, "选择分类");
-    ui.drawFooter("短按:下选 长按:确认");
+    std::vector<std::string> cats = {"TV", "AC", "FAN", "STB", "Uncat"};
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]CAT");
+    ui.drawMenu(cats, renameCatIndex, "Pick category");
+    ui.drawFooter("Short:NXT Long:OK");
   }
 
   void drawDeleteConfirm(UIScreen& ui, SignalStorage& storage) {
-    std::vector<std::string> opts = {"取消", "确认删除"};
-    ui.drawPopup("⚠️ 删除确认", "确认删除 " + signals[signalIndex].name + "?\n此操作不可恢复", opts, deleteOption);
+    std::vector<std::string> opts = {"Cancel", "Confirm"};
+    ui.drawPopup("[!] DEL?", "Del " + signals[signalIndex].name + "?\nCannot undo!", opts, deleteOption);
   }
 
   void drawRawData(UIScreen& ui, SignalStorage& storage) {
     Signal s = storage.getSignal(signals[signalIndex].id);
-    ui.drawStatusBar("🔋", storage.getCount(), "📁原始数据");
+    ui.drawStatusBar("[B]", storage.getCount(), "[M]RAW");
     ui.drawSignalInfo(s.name, s.protocol, s.address, s.command, "Raw: " + std::to_string(s.rawLength));
-    ui.drawFooter("长按:返回");
+    ui.drawFooter("Long:Back");
   }
 
   const std::vector<std::string>* getNameList(const std::string& category) {
-    if (category == "电视") return &TV_NAMES;
-    if (category == "空调") return &AC_NAMES;
-    if (category == "风扇") return &FAN_NAMES;
-    if (category == "机顶盒") return &STB_NAMES;
+    if (category == "TV") return &TV_NAMES;
+    if (category == "AC") return &AC_NAMES;
+    if (category == "FAN") return &FAN_NAMES;
+    if (category == "STB") return &STB_NAMES;
     return &CUSTOM_NAMES;
   }
 }
@@ -99,7 +99,7 @@ namespace SignalManager {
   }
 
   void update(UIScreen& ui, SignalStorage& storage) {
-    // 无自动状态转换，全靠按钮驱动
+    // 无Auto状态转换，全靠按钮驱动
   }
 
   void onShortPress(UIScreen& ui, SignalStorage& storage) {
@@ -118,7 +118,7 @@ namespace SignalManager {
       renameNameIndex = (renameNameIndex + 1) % currentNameList->size();
       drawRenameName(ui, storage);
     } else if (subState == MgrSubState::CATEGORY_SELECT) {
-      std::vector<std::string> cats = {"电视", "空调", "风扇", "机顶盒", "未分类"};
+      std::vector<std::string> cats = {"TV", "AC", "FAN", "STB", "Uncat"};
       renameCatIndex = (renameCatIndex + 1) % cats.size();
       drawCategorySelect(ui, storage);
     } else if (subState == MgrSubState::DELETE_CONFIRM) {
@@ -135,11 +135,11 @@ namespace SignalManager {
       drawActionMenu(ui, storage);
       return false;
     } else if (subState == MgrSubState::ACTION_MENU) {
-      if (actionIndex == 0) {  // 重命名
+      if (actionIndex == 0) {  // Rename
         subState = MgrSubState::RENAME_CATEGORY;
         renameCatIndex = 0;
         drawRenameCategory(ui, storage);
-      } else if (actionIndex == 1) {  // 归类
+      } else if (actionIndex == 1) {  // CAT
         subState = MgrSubState::CATEGORY_SELECT;
         renameCatIndex = 0;
         drawCategorySelect(ui, storage);
@@ -147,10 +147,10 @@ namespace SignalManager {
         subState = MgrSubState::DELETE_CONFIRM;
         deleteOption = 0;
         drawDeleteConfirm(ui, storage);
-      } else if (actionIndex == 3) {  // 原始数据
+      } else if (actionIndex == 3) {  // RAW
         subState = MgrSubState::RAW_DATA;
         drawRawData(ui, storage);
-      } else if (actionIndex == 4) {  // 返回
+      } else if (actionIndex == 4) {  // Back
         subState = MgrSubState::SIGNAL_LIST;
         drawSignalList(ui, storage);
       }
@@ -177,7 +177,7 @@ namespace SignalManager {
       drawSignalList(ui, storage);
       return false;
     } else if (subState == MgrSubState::CATEGORY_SELECT) {
-      std::vector<std::string> cats = {"电视", "空调", "风扇", "机顶盒", "未分类"};
+      std::vector<std::string> cats = {"TV", "AC", "FAN", "STB", "Uncat"};
       std::string cat = cats[renameCatIndex];
       Signal s = signals[signalIndex];
       s.category = cat;
@@ -189,7 +189,7 @@ namespace SignalManager {
       drawSignalList(ui, storage);
       return false;
     } else if (subState == MgrSubState::DELETE_CONFIRM) {
-      if (deleteOption == 1) {  // 确认删除
+      if (deleteOption == 1) {  // Confirm
         storage.removeSignal(signals[signalIndex].id);
         refreshSignals(storage);
       }

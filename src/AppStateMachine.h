@@ -32,7 +32,7 @@ private:
   unsigned long btnPressStart_ = 0;
   bool longPressHandled_ = false;
 
-  static constexpr const char* MENU_ITEMS[] = {"扫描模式", "控制模式", "信号管理", "设置"};
+  static constexpr const char* MENU_ITEMS[] = {"Scan", "Ctrl", "Mgmt", "Set"};
   static constexpr int MENU_COUNT = 4;
   int menuIndex_ = 0;
 

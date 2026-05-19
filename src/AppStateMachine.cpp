@@ -140,13 +140,13 @@ void AppStateMachine::drawMainMenu() {
   for (int i = 0; i < MENU_COUNT; i++) {
     items.emplace_back(MENU_ITEMS[i]);
   }
-  ui_.drawStatusBar("🔋", storage_.getCount(), "主菜单");
+  ui_.drawStatusBar("[B]", storage_.getCount(), "MENU");
   ui_.drawMenu(items, menuIndex_);
-  ui_.drawFooter("短按:选择 长按:进入");
+  ui_.drawFooter("Short:SEL Long:ENTR");
 }
 
 void AppStateMachine::handleMainMenu() {
-  // 主菜单在 checkButton 中处理
+  // MENU在 checkButton 中处理
 }
 
 void AppStateMachine::handleScanMode() {
