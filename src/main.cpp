@@ -1,7 +1,13 @@
-#ifdef ARDUINO
-#include <Arduino.h>
+#include <M5Unified.h>
+#include "AppStateMachine.h"
 
-void setup() {}
+AppStateMachine app;
 
-void loop() {}
-#endif
+void setup() {
+  app.begin();
+}
+
+void loop() {
+  app.update();
+  delay(10);
+}
