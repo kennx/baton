@@ -1,117 +1,117 @@
-# IR Scanner for M5StickS3
+# M5StickS3 红外扫描控制器
 
-A universal infrared remote learning and replay system for the M5StickS3. Scan IR signals from your existing remotes, save them, and replay them to control your devices.
+一款基于 M5StickS3 的通用红外遥控学习与重放系统。扫描现有遥控器的红外信号，保存后重放以控制家电。
 
-## Hardware
+## 硬件需求
 
-- [M5StickS3](https://docs.m5stack.com/en/core/M5StickS3) (ESP32-S3, 8MB Flash + 8MB PSRAM)
-- Built-in IR transmitter (GPIO46) and receiver (GPIO42)
-- 135×240 ST7789 display
-- Single button (BtnA) operation
+- [M5StickS3](https://docs.m5stack.com/en/core/M5StickS3)（ESP32-S3，8MB Flash + 8MB PSRAM）
+- 内置红外发射管（GPIO46）和红外接收头（GPIO42）
+- 135×240 ST7789 屏幕
+- 单按钮（BtnA）操作
 
-## Build & Flash
+## 编译与烧录
 
 ```bash
-# Clone and build
+# 编译
 pio run -e m5stick-s3
 
-# Upload to device
+# 烧录到设备
 pio run -e m5stick-s3 --target upload
 
-# Monitor serial output
+# 查看串口输出
 pio device monitor -b 115200
 ```
 
-## How to Use
+## 操作方法
 
-All interaction uses a single button with two gestures:
+所有交互通过单一按钮的两种手势完成：
 
-| Gesture | Action |
-|---------|--------|
-| **Short press** BtnA | Move selection down |
-| **Long press** BtnA (>500ms) | Confirm / enter selected item |
-
----
-
-### Main Menu
-
-Power on to enter the main menu. Four options are shown:
-
-| Menu | Purpose |
-|------|---------|
-| **Scan** | Learn IR signals from your remotes |
-| **Ctrl** | Browse saved signals and transmit them |
-| **Mgmt** | Rename, categorize, or delete saved signals |
-| **Set** | Adjust repeat count, brightness, buzzer, etc. |
-
-Short press to cycle through menus. Long press to enter the selected mode.
+| 手势 | 动作 |
+|------|------|
+| **短按** BtnA | 向下移动选择项 |
+| **长按** BtnA（>500ms） | 确认 / 进入当前选中项 |
 
 ---
 
-### Scan Mode
+### 主菜单
 
-Automatically listens for infrared signals.
+开机后进入主菜单，显示四个选项：
 
-- Point any IR remote at the M5StickS3 and press a button.
-- The signal is decoded, deduplicated, and saved automatically.
-- Status messages appear for 2 seconds:
-  - `OK New signal saved` — first time seeing this signal
-  - `DUP - skip` — already saved, not stored again
-  - `FULL! Del old sigs` — storage limit (50 signals) reached
-- A short beep confirms a new save (if buzzer is enabled).
-- Long press BtnA to return to the main menu.
+| 菜单项（屏幕显示） | 中文含义 | 功能 |
+|-------------------|----------|------|
+| **Scan** | 扫描 | 学习遥控器的红外信号 |
+| **Ctrl** | 控制 | 浏览已保存的信号并发射 |
+| **Mgmt** | 管理 | 重命名、分类或删除信号 |
+| **Set** | 设置 | 调整发射次数、亮度、蜂鸣器等 |
 
----
-
-### Ctrl Mode
-
-Browse your saved signals and transmit them.
-
-- Short press BtnA to scroll through the signal list.
-- The last item in the list is `-- FILTER --`; select it to filter by category (All / TV / AC / FAN / STB / Uncat).
-- Long press BtnA on a signal to **transmit** it.
-- A brief `Sending...` screen appears while the IR LED fires.
-- The signal is sent with the configured repeat count (default 2).
-- Long press BtnA on the first item to return to the main menu.
+短按切换菜单，长按进入对应模式。
 
 ---
 
-### Mgmt Mode
+### Scan（扫描模式）
 
-Manage your saved signals.
+自动监听环境中的红外信号。
 
-1. Short press to select a signal, then long press to open the action menu.
-2. Choose an action:
-
-| Action | Description |
-|--------|-------------|
-| **Rename** | Pick a category (TV / AC / FAN / STB / Custom) and a preset name. The signal is renamed to `Category-Name`, e.g. `TV-Power`. |
-| **Categorize** | Move the signal to a different folder without renaming it. |
-| **Delete** | Shows a confirmation popup. Select `Confirm` and long press to permanently remove the signal. |
-| **Raw data** | View technical details (protocol, address, command, raw length). Long press to go back. |
-| **Back** | Return to the signal list. |
+- 将任意红外遥控器对准 M5StickS3，按下遥控器按键。
+- 信号自动解码、去重并保存。
+- 状态信息持续显示 2 秒：
+  - `OK New signal saved` — 首次接收到该信号，已保存
+  - `DUP - skip` — 信号已存在，跳过保存
+  - `FULL! Del old sigs` — 存储已满（上限 50 个），需删除旧信号
+- 保存新信号时蜂鸣器短鸣提示（如蜂鸣器已开启）。
+- 长按 BtnA 返回主菜单。
 
 ---
 
-### Set Mode
+### Ctrl（控制模式）
 
-Adjust system settings.
+浏览已保存的红外信号并发射。
 
-| Setting | Default | Behavior |
-|---------|---------|----------|
-| **Clear all** | — | Deletes all saved signals after confirmation. |
-| **Repeat** | 2 | IR transmit repeat count (cycles 1→2→3→4→5→1). |
-| **Brightness** | 80% | Screen brightness (cycles 20→40→60→80→100→20). Changes apply immediately. |
-| **Buzzer** | ON | Enable / disable the beep sound on new signal save. |
-| **About** | — | Shows firmware version, signal count, and storage usage. |
-
-Long press on any setting to adjust it. Long press `About` to view; long press again to return.
+- 短按 BtnA 在信号列表中向下移动。
+- 列表最后一项为 `-- FILTER --`，选中后可按分类筛选（全部 All / 电视 TV / 空调 AC / 风扇 FAN / 机顶盒 STB / 未分类 Uncat）。
+- 在信号上长按 BtnA 即可**发射**该信号。
+- 发射时屏幕短暂显示 `Sending...`。
+- 信号按设置中的重复次数发射（默认 2 次）。
+- 在第一项长按 BtnA 返回主菜单。
 
 ---
 
-## Supported IR Protocols
+### Mgmt（管理模式）
 
-The system can **decode** and **transmit** signals for these protocols:
+管理已保存的红外信号。
+
+1. 短按选择信号，长按打开操作菜单。
+2. 选择操作：
+
+| 操作 | 说明 |
+|------|------|
+| **Rename**（重命名） | 先选择分类（TV / AC / FAN / STB / Custom），再选择预设名称。信号重命名为 `分类-名称` 格式，如 `TV-Power`。 |
+| **Categorize**（归类） | 将信号移动到另一个分类文件夹，不改名称。 |
+| **Delete**（删除） | 弹出二次确认窗口。选中 `Confirm` 后长按确认，永久删除该信号。 |
+| **Raw data**（原始数据） | 查看信号的技术详情（协议类型、地址、命令、原始数据长度）。长按返回。 |
+| **Back**（返回） | 返回信号列表。 |
+
+---
+
+### Set（设置模式）
+
+调整系统设置。
+
+| 设置项 | 默认值 | 说明 |
+|--------|--------|------|
+| **Clear all**（清空所有） | — | 删除所有已保存信号，需二次确认。 |
+| **Repeat**（发射重复） | 2 | 红外发射重复次数（循环 1→2→3→4→5→1）。 |
+| **Brightness**（亮度） | 80% | 屏幕亮度（循环 20→40→60→80→100→20），修改后立即生效。 |
+| **Buzzer**（蜂鸣器） | ON | 开启/关闭保存新信号时的蜂鸣提示音。 |
+| **About**（关于） | — | 显示固件版本、信号数量、存储占用统计。 |
+
+长按某项设置即可调整。长按 `About` 查看信息，再次长按返回。
+
+---
+
+## 支持的红外协议
+
+系统可**解码**并**发射**以下协议的信号：
 
 - NEC / NECX / NEC42
 - Sony
@@ -122,18 +122,17 @@ The system can **decode** and **transmit** signals for these protocols:
 - Panasonic / PanasonicAC
 - Sharp
 
-Signals from unknown protocols are captured as raw timing arrays and replayed exactly as received.
+未知协议的信号以原始时长数组形式捕获，并按原样精确重放。
 
-## Storage
+## 存储说明
 
-- Up to **50 signals** can be saved.
-- Signals are stored in LittleFS (on-board Flash).
-- Each signal preserves its raw timing data for exact replay.
-- Data persists across power cycles.
+- 最多保存 **50 个信号**。
+- 信号存储在 LittleFS（板载 Flash）中，掉电不丢失。
+- 每个信号保留原始时长数据，确保精确重放。
 
-## Notes
+## 注意事项
 
-- **Line of sight** is required between the M5StickS3 and the target device during transmission.
-- The IR receiver may pick up ambient IR noise; deduplication prevents duplicate saves from the same button press.
-- If a signal fails to control your device, try increasing the **Repeat** count in settings.
-- The built-in speaker amp is disabled during IR reception to avoid interference.
+- **红外需要视线传输**：发射时确保 M5StickS3 与目标设备之间无遮挡。
+- 红外接收头可能接收到环境红外噪声，去重机制可避免同一按键重复保存。
+- 若信号无法控制设备，可在设置中增加**发射重复次数**。
+- 红外接收期间内置扬声器功放自动关闭，避免接收干扰。
