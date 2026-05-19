@@ -200,7 +200,7 @@ void AppStateMachine::drawMainMenu() {
 }
 
 void AppStateMachine::handleMainMenu() {
-  // MENU在 checkButton 中处理
+  // MENU handled in checkBtnA / onBtnAShortPress
 }
 
 void AppStateMachine::handleScanMode() {
