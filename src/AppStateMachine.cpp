@@ -3,6 +3,7 @@
 #include "ControlMode.h"
 #include "SignalManager.h"
 #include "SettingsMode.h"
+#include "BruteForceMode.h"
 
 constexpr const char* AppStateMachine::MENU_ITEMS[AppStateMachine::MENU_COUNT];
 
@@ -35,6 +36,9 @@ void AppStateMachine::update() {
     case AppState::SETTINGS:
       handleSettings();
       break;
+    case AppState::BRUTE_FORCE:
+      BruteForceMode::update(ui_, storage_, ir_);
+      break;
   }
 }
 
@@ -58,6 +62,9 @@ void AppStateMachine::changeState(AppState newState) {
       break;
     case AppState::SETTINGS:
       SettingsMode::enter(ui_, storage_);
+      break;
+    case AppState::BRUTE_FORCE:
+      BruteForceMode::enter(ui_, storage_, ir_);
       break;
   }
 }
@@ -120,6 +127,9 @@ void AppStateMachine::onBtnAShortPress() {
     case AppState::SETTINGS:
       SettingsMode::onShortPress(ui_, storage_);
       break;
+    case AppState::BRUTE_FORCE:
+      BruteForceMode::onShortPress(ui_, storage_, ir_);
+      break;
   }
 }
 
@@ -148,6 +158,11 @@ void AppStateMachine::onBtnALongPress() {
         changeState(AppState::MAIN_MENU);
       }
       break;
+    case AppState::BRUTE_FORCE:
+      if (BruteForceMode::onLongPress(ui_, storage_, ir_)) {
+        changeState(AppState::MAIN_MENU);
+      }
+      break;
   }
 }
 
@@ -165,6 +180,9 @@ void AppStateMachine::onBtnBShortPress() {
       break;
     case AppState::SETTINGS:
       returnToMenu = SettingsMode::onBtnBShortPress(ui_, storage_);
+      break;
+    case AppState::BRUTE_FORCE:
+      returnToMenu = BruteForceMode::onBtnBShortPress(ui_, storage_, ir_);
       break;
   }
   if (returnToMenu) changeState(AppState::MAIN_MENU);
@@ -184,6 +202,9 @@ void AppStateMachine::onBtnBLongPress() {
       break;
     case AppState::SETTINGS:
       returnToMenu = SettingsMode::onBtnBLongPress(ui_, storage_);
+      break;
+    case AppState::BRUTE_FORCE:
+      returnToMenu = BruteForceMode::onBtnBLongPress(ui_, storage_, ir_);
       break;
   }
   if (returnToMenu) changeState(AppState::MAIN_MENU);

@@ -9,7 +9,8 @@ enum class AppState {
   SCAN_MODE,
   CONTROL_MODE,
   SIGNAL_MANAGER,
-  SETTINGS
+  SETTINGS,
+  BRUTE_FORCE
 };
 
 class AppStateMachine {
@@ -36,8 +37,8 @@ private:
   unsigned long btnBPressStart_ = 0;
   bool btnBLongHandled_ = false;
 
-  static constexpr const char* MENU_ITEMS[] = {"Scan", "Ctrl", "Mgmt", "Set"};
-  static constexpr int MENU_COUNT = 4;
+  static constexpr const char* MENU_ITEMS[] = {"Scan", "Ctrl", "Mgmt", "Set", "Find"};
+  static constexpr int MENU_COUNT = 5;
   int menuIndex_ = 0;
 
   void handleMainMenu();
