@@ -1,4 +1,5 @@
 #include "SignalManager.h"
+#include "PresetNames.h"
 
 namespace {
   enum class MgrSubState { SIGNAL_LIST, ACTION_MENU, RENAME_CATEGORY, RENAME_NAME, CATEGORY_SELECT, DELETE_CONFIRM, RAW_DATA };
@@ -12,15 +13,7 @@ namespace {
   int deleteOption = 0;
 
   const std::vector<std::string> ACTIONS = {"Rename", "Categorize", "Delete", "Raw data", "Back"};
-  const std::vector<std::string> RENAME_CATS = {"TV", "AC", "FAN", "STB", "Custom"};
-
-  const std::vector<std::string> TV_NAMES = {"Power", "Vol+", "Vol-", "CH+", "CH-", "Mute", "Menu", "Up", "Down", "Left", "Right", "OK", "Back"};
-  const std::vector<std::string> AC_NAMES = {"Power", "Cool", "Heat", "Dry", "Auto", "Temp+", "Temp-", "Fan", "Swing", "Timer"};
-  const std::vector<std::string> FAN_NAMES = {"Power", "Fan", "Osc", "Timer"};
-  const std::vector<std::string> STB_NAMES = {"Power", "Menu", "Back", "Live", "Up", "Down", "Left", "Right", "OK", "Back"};
-  const std::vector<std::string> CUSTOM_NAMES = {"Custom-01", "Custom-02", "Custom-03", "Custom-04", "Custom-05"};
-
-  const std::vector<std::string>* currentNameList = &TV_NAMES;
+  const std::vector<std::string>* currentNameList = &PresetNames::TV;
 
   void refreshSignals(SignalStorage& storage) {
     signals = storage.getAllSignals();
@@ -51,7 +44,7 @@ namespace {
 
   void drawRenameCategory(UIScreen& ui, SignalStorage& storage) {
     ui.drawStatusBar("[B]", storage.getCount(), "[M]Rename");
-    ui.drawMenu(RENAME_CATS, renameCatIndex, "Pick category");
+    ui.drawMenu(PresetNames::CATEGORIES, renameCatIndex, "Pick category");
     ui.drawFooter("Short:NXT Long:OK");
   }
 
@@ -80,13 +73,6 @@ namespace {
     ui.drawFooter("Long:Back");
   }
 
-  const std::vector<std::string>* getNameList(const std::string& category) {
-    if (category == "TV") return &TV_NAMES;
-    if (category == "AC") return &AC_NAMES;
-    if (category == "FAN") return &FAN_NAMES;
-    if (category == "STB") return &STB_NAMES;
-    return &CUSTOM_NAMES;
-  }
 }
 
 namespace SignalManager {
@@ -112,7 +98,7 @@ namespace SignalManager {
       actionIndex = (actionIndex + 1) % ACTIONS.size();
       drawActionMenu(ui, storage);
     } else if (subState == MgrSubState::RENAME_CATEGORY) {
-      renameCatIndex = (renameCatIndex + 1) % RENAME_CATS.size();
+      renameCatIndex = (renameCatIndex + 1) % PresetNames::CATEGORIES.size();
       drawRenameCategory(ui, storage);
     } else if (subState == MgrSubState::RENAME_NAME) {
       renameNameIndex = (renameNameIndex + 1) % currentNameList->size();
@@ -156,14 +142,14 @@ namespace SignalManager {
       }
       return false;
     } else if (subState == MgrSubState::RENAME_CATEGORY) {
-      std::string cat = RENAME_CATS[renameCatIndex];
-      currentNameList = getNameList(cat);
+      std::string cat = PresetNames::CATEGORIES[renameCatIndex];
+      currentNameList = PresetNames::getNameList(cat);
       subState = MgrSubState::RENAME_NAME;
       renameNameIndex = 0;
       drawRenameName(ui, storage);
       return false;
     } else if (subState == MgrSubState::RENAME_NAME) {
-      std::string cat = RENAME_CATS[renameCatIndex];
+      std::string cat = PresetNames::CATEGORIES[renameCatIndex];
       std::string name = (*currentNameList)[renameNameIndex];
       Signal s = signals[signalIndex];
       s.name = cat + "-" + name;
