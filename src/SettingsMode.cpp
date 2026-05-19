@@ -105,10 +105,21 @@ namespace SettingsMode {
   }
 
   bool onBtnBShortPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub: will be filled in Task 2
+    if (subState == SetSubState::MENU) {
+      return true;  // back to main menu
+    } else if (subState == SetSubState::CONFIRM_CLEAR) {
+      subState = SetSubState::MENU;
+      drawMenu(ui, storage);
+      return false;  // stayed inside Settings
+    } else if (subState == SetSubState::ABOUT) {
+      subState = SetSubState::MENU;
+      drawMenu(ui, storage);
+      return false;
+    }
+    return true;
   }
   bool onBtnBLongPress(UIScreen& ui, SignalStorage& storage) {
-    return true;  // stub
+    return true;  // always return to main menu
   }
 
   int getRepeatCount() { return repeatCount; }
