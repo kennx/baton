@@ -1,5 +1,5 @@
 #include <unity.h>
-#include "Signal.h"
+#include "SignalData.h"
 
 void test_signal_default_values() {
   Signal s;
@@ -26,13 +26,4 @@ void test_signal_raw_data() {
   TEST_ASSERT_EQUAL(1690, s.rawData[5]);
 }
 
-void setUp() {}
-void tearDown() {}
 
-int main() {
-  UNITY_BEGIN();
-  RUN_TEST(test_signal_default_values);
-  RUN_TEST(test_signal_equality);
-  RUN_TEST(test_signal_raw_data);
-  UNITY_END();
-}
