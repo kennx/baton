@@ -1,11 +1,12 @@
 #include "UIScreen.h"
 
 // Define modern colors
-static constexpr uint32_t COLOR_BG = 0x10A2; // RGB565(16,16,16) roughly
-static constexpr uint32_t COLOR_DOT = 0x2124; // RGB565(32,32,32)
-static constexpr uint32_t COLOR_ACCENT = 0x03DF; // Bright Blue matching the button (RGB: 0, 122, 255)
-static constexpr uint32_t COLOR_TEXT = TFT_WHITE;
-static constexpr uint32_t COLOR_HEADER = 0x2104; // Darker grey
+// IMPORTANT: Use uint16_t for RGB565 values. uint32_t is interpreted as RGB888 by M5GFX.
+static constexpr uint16_t COLOR_BG = 0x10A2; // RGB565(16,16,16) roughly
+static constexpr uint16_t COLOR_DOT = 0x2124; // RGB565(32,32,32)
+static constexpr uint16_t COLOR_ACCENT = 0x03DF; // Bright Blue matching the button (RGB: 0, 122, 255)
+static constexpr uint16_t COLOR_TEXT = TFT_WHITE;
+static constexpr uint16_t COLOR_HEADER = 0x2104; // Darker grey
 
 void UIScreen::init() {
   M5.Display.setRotation(0);  // 135x240
