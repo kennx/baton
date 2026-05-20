@@ -55,16 +55,21 @@ void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::st
     }
   }
 
-  int y = CONTENT_Y + 16;
   M5.Display.setFont(&fonts::FreeSans9pt7b);
+
+  // FreeSans9pt7b: yAdvance=22, ascent ~13, descent ~5
+  const int fontAscent = 13;
+  const int lineHeight = 22;
+  const int pad = 2; // vertical padding inside highlight
+
+  int y = CONTENT_Y + fontAscent + pad; // first baseline
 
   if (!title.empty()) {
     M5.Display.setTextColor(COLOR_ACCENT, COLOR_BG);
     drawCenteredText(title, y);
-    y += 24; // Title spacing
+    y += lineHeight + 2; // Extra gap after title
   }
 
-  const int lineHeight = 24;
   int maxVisible = (CONTENT_Y + CONTENT_H - y) / lineHeight;
   
   int startIdx = selectedIndex - maxVisible / 2;
@@ -76,8 +81,10 @@ void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::st
 
   for (int i = 0; i < maxVisible && (startIdx + i) < totalItems; i++) {
     int idx = startIdx + i;
+    // Highlight rect: from (baseline - ascent - pad) with height (lineHeight)
+    int rectY = y - fontAscent - pad;
     if (idx == selectedIndex) {
-      M5.Display.fillRect(0, y - 16, SCREEN_WIDTH, lineHeight, COLOR_ACCENT);
+      M5.Display.fillRect(0, rectY, SCREEN_WIDTH, lineHeight, COLOR_ACCENT);
       M5.Display.setTextColor(TFT_BLACK, COLOR_ACCENT);
     } else {
       M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
@@ -197,6 +204,6 @@ void UIScreen::drawText(const std::string& text, int x, int y) {
   M5.Display.print(text.c_str());
 }
 
-void UIScreen::fillRect(int x, int y, int w, int h, uint32_t color) {
+void UIScreen::fillRect(int x, int y, int w, int h, uint16_t color) {
   M5.Display.fillRect(x, y, w, h, color);
 }

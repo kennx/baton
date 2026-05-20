@@ -31,5 +31,5 @@ private:
   void drawBackground();
   void drawCenteredText(const std::string& text, int y);
   void drawText(const std::string& text, int x, int y);
-  void fillRect(int x, int y, int w, int h, uint32_t color);
+  void fillRect(int x, int y, int w, int h, uint16_t color);
 };
