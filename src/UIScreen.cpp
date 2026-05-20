@@ -76,7 +76,7 @@ void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::st
   for (int i = 0; i < maxVisible && (startIdx + i) < totalItems; i++) {
     int idx = startIdx + i;
     if (idx == selectedIndex) {
-      M5.Display.fillRoundRect(2, y - 16, SCREEN_WIDTH - 4, lineHeight, 4, COLOR_ACCENT);
+      M5.Display.fillRect(0, y - 16, SCREEN_WIDTH, lineHeight, COLOR_ACCENT);
       M5.Display.setTextColor(TFT_BLACK, COLOR_ACCENT);
     } else {
       M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
@@ -116,7 +116,7 @@ void UIScreen::drawPopup(const std::string& title, const std::string& message,
   int oy = py + 64;
   for (size_t i = 0; i < options.size(); i++) {
     if (static_cast<int>(i) == selectedOption) {
-      M5.Display.fillRoundRect(px + 10, oy - 14, pw - 20, 20, 4, COLOR_ACCENT);
+      M5.Display.fillRect(px + 10, oy - 14, pw - 20, 20, COLOR_ACCENT);
       M5.Display.setTextColor(TFT_BLACK, COLOR_ACCENT);
     } else {
       M5.Display.setTextColor(COLOR_TEXT, COLOR_HEADER);
