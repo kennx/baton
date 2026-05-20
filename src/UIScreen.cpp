@@ -58,7 +58,7 @@ void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::st
   M5.Display.setFont(&fonts::FreeSans9pt7b);
 
   if (!title.empty()) {
-    M5.Display.setTextColor(COLOR_ACCENT);
+    M5.Display.setTextColor(COLOR_ACCENT, COLOR_BG);
     drawCenteredText(title, y);
     y += 24; // Title spacing
   }
@@ -76,10 +76,10 @@ void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::st
   for (int i = 0; i < maxVisible && (startIdx + i) < totalItems; i++) {
     int idx = startIdx + i;
     if (idx == selectedIndex) {
-      M5.Display.fillRoundRect(2, y - 16, SCREEN_WIDTH - 4, lineHeight - 2, 4, COLOR_ACCENT);
+      M5.Display.fillRoundRect(2, y - 16, SCREEN_WIDTH - 4, lineHeight, 4, COLOR_ACCENT);
       M5.Display.setTextColor(TFT_BLACK, COLOR_ACCENT);
     } else {
-      M5.Display.setTextColor(COLOR_TEXT);
+      M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
     }
     
     // Draw text (limit length to prevent wrapping)
@@ -107,10 +107,10 @@ void UIScreen::drawPopup(const std::string& title, const std::string& message,
   M5.Display.drawRoundRect(px, py, pw, ph, 8, COLOR_ACCENT);
 
   M5.Display.setFont(&fonts::FreeSans9pt7b);
-  M5.Display.setTextColor(COLOR_ACCENT);
+  M5.Display.setTextColor(COLOR_ACCENT, COLOR_HEADER);
   drawCenteredText(title, py + 20);
 
-  M5.Display.setTextColor(COLOR_TEXT);
+  M5.Display.setTextColor(COLOR_TEXT, COLOR_HEADER);
   drawCenteredText(message, py + 44);
 
   int oy = py + 64;
@@ -119,7 +119,7 @@ void UIScreen::drawPopup(const std::string& title, const std::string& message,
       M5.Display.fillRoundRect(px + 10, oy - 14, pw - 20, 20, 4, COLOR_ACCENT);
       M5.Display.setTextColor(TFT_BLACK, COLOR_ACCENT);
     } else {
-      M5.Display.setTextColor(COLOR_TEXT);
+      M5.Display.setTextColor(COLOR_TEXT, COLOR_HEADER);
     }
     drawCenteredText(options[i], oy);
     oy += 24;
@@ -140,11 +140,11 @@ void UIScreen::drawSignalInfo(const std::string& name, const std::string& protoc
   int y = CONTENT_Y + 24;
   M5.Display.setFont(&fonts::FreeSans9pt7b);
   
-  M5.Display.setTextColor(COLOR_TEXT);
+  M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
   drawCenteredText(name, y);
   y += 24;
-  
-  M5.Display.setTextColor(TFT_LIGHTGREY);
+
+  M5.Display.setTextColor(TFT_LIGHTGREY, COLOR_BG);
   drawCenteredText(protocol, y);
   y += 24;
   drawCenteredText("Addr: " + address, y);
@@ -153,9 +153,9 @@ void UIScreen::drawSignalInfo(const std::string& name, const std::string& protoc
   y += 32;
 
   if (status == "SENDING...") {
-    M5.Display.setTextColor(TFT_RED);
+    M5.Display.setTextColor(TFT_RED, COLOR_BG);
   } else {
-    M5.Display.setTextColor(TFT_GREEN);
+    M5.Display.setTextColor(TFT_GREEN, COLOR_BG);
   }
   drawCenteredText(status, y);
 }
@@ -165,7 +165,7 @@ void UIScreen::drawProgressBar(const std::string& label, int percent) {
 
   int y = CONTENT_Y + CONTENT_H / 2 - 20;
   M5.Display.setFont(&fonts::FreeSans9pt7b);
-  M5.Display.setTextColor(COLOR_TEXT);
+  M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
   drawCenteredText(label, y);
 
   int barY = y + 10;
