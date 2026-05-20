@@ -33,7 +33,8 @@ void UIScreen::drawStatusBar(const std::string& battery, int signalCount, const 
   fillRect(0, 0, SCREEN_WIDTH, STATUS_BAR_H, COLOR_BG);
   M5.Display.setFont(&fonts::FreeSans9pt7b);
   M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
-  M5.Display.setCursor(4, STATUS_BAR_H - 6); // FreeSans baseline is at bottom
+  int y = (STATUS_BAR_H - M5.Display.fontHeight()) / 2;
+  M5.Display.setCursor(4, y);
   M5.Display.printf("%s %d %s", battery.c_str(), signalCount, mode.c_str());
 }
 
@@ -42,7 +43,8 @@ void UIScreen::drawFooter(const std::string& hint) {
   fillRect(0, y, SCREEN_WIDTH, FOOTER_H, COLOR_BG);
   M5.Display.setFont(&fonts::FreeSans9pt7b);
   M5.Display.setTextColor(COLOR_TEXT, COLOR_BG);
-  drawCenteredText(hint, SCREEN_HEIGHT - 6);
+  int textY = y + (FOOTER_H - M5.Display.fontHeight()) / 2;
+  drawCenteredText(hint, textY);
 }
 
 void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::string(int)> getItemText, const std::string& title) {
