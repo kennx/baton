@@ -14,33 +14,28 @@ namespace {
 
   void drawCategorySelect(UIScreen& ui, SignalStorage& storage) {
     size_t count = DeviceDatabase::getCategoryCount();
-    std::vector<std::string> cats;
-    for (size_t i = 0; i < count; i++) {
-      const char* name = DeviceDatabase::getCategoryName(i);
-      size_t pCount = DeviceDatabase::getProfileCount(i);
-      cats.push_back(std::string(name) + " (" + std::to_string(pCount) + ")");
-    }
     ui.drawStatusBar("[B]", storage.getCount(), "MATCH");
-    ui.drawMenu(cats, categoryIndex, "Category");
+    ui.drawMenu(count, categoryIndex, [](int idx) {
+      return std::string(DeviceDatabase::getCategoryName(idx)) + " (" + std::to_string(DeviceDatabase::getProfileCount(idx)) + ")";
+    }, "Category");
     ui.drawFooter("NXT        SEL");
   }
 
   void drawRemoteSelect(UIScreen& ui, SignalStorage& storage) {
     size_t count = DeviceDatabase::getProfileCount(categoryIndex);
-    std::vector<std::string> remotes;
-    for (size_t i = 0; i < count; i++) {
-      const auto* p = DeviceDatabase::getProfile(categoryIndex, i);
-      if (p) remotes.push_back(p->brand);
-    }
     const char* catName = DeviceDatabase::getCategoryName(categoryIndex);
     ui.drawStatusBar("[B]", storage.getCount(), "MATCH");
-    ui.drawMenu(remotes, remoteIndex, catName);
+    ui.drawMenu(count, remoteIndex, [](int idx) {
+      const auto* p = DeviceDatabase::getProfile(categoryIndex, idx);
+      return p ? std::string(p->brand) : "";
+    }, catName);
     ui.drawFooter("NXT        TEST");
   }
 
-  void drawTestPower(UIScreen& ui, SignalStorage& storage) {
+  void drawTestPower(UIScreen& ui, SignalStorage& storage, bool success = true) {
     ui.drawStatusBar("[B]", storage.getCount(), "TEST");
-    ui.drawSignalInfo(currentProfile.brand, currentProfile.protocol, currentProfile.address, powerCmd.hexCode, "Test Power");
+    std::string statusMsg = success ? "Test Power" : "Unsupported!";
+    ui.drawSignalInfo(currentProfile.brand, currentProfile.protocol, currentProfile.address, powerCmd.hexCode, statusMsg);
     ui.drawFooter("SEND       SAVE");
   }
 
@@ -60,7 +55,7 @@ namespace {
     for (const auto& c : currentProfile.commands) {
       std::string lower = c.name;
       for (auto& ch : lower) ch = tolower(ch);
-      if (lower == "power") {
+      if (lower.find("power") != std::string::npos || lower.find("on") != std::string::npos || lower.find("off") != std::string::npos) {
         powerCmd = c;
         break;
       }
@@ -105,8 +100,8 @@ namespace MatchMode {
       testSignal.protocol = currentProfile.protocol;
       testSignal.address = currentProfile.address;
       testSignal.command = powerCmd.hexCode;
-      ir.sendSignal(testSignal);
-      drawTestPower(ui, storage);
+      bool success = ir.sendSignal(testSignal);
+      drawTestPower(ui, storage, success);
     } else if (mState == MState::SAVE_CONFIRM) {
       mState = MState::TEST_POWER;
       drawTestPower(ui, storage);
@@ -129,8 +124,8 @@ namespace MatchMode {
       testSignal.protocol = currentProfile.protocol;
       testSignal.address = currentProfile.address;
       testSignal.command = powerCmd.hexCode;
-      ir.sendSignal(testSignal);
-      drawTestPower(ui, storage);
+      bool success = ir.sendSignal(testSignal);
+      drawTestPower(ui, storage, success);
       return false;
     } else if (mState == MState::TEST_POWER) {
       mState = MState::SAVE_CONFIRM;

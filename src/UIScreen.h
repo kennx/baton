@@ -3,6 +3,7 @@
 #include <M5Unified.h>
 #include <vector>
 #include <string>
+#include <functional>
 
 class UIScreen {
 public:
@@ -18,6 +19,7 @@ public:
   void drawStatusBar(const std::string& battery, int signalCount, const std::string& mode);
   void drawFooter(const std::string& hint);
   void drawMenu(const std::vector<std::string>& items, int selectedIndex, const std::string& title = "");
+  void drawMenu(int totalItems, int selectedIndex, std::function<std::string(int)> getItemText, const std::string& title = "");
   void drawPopup(const std::string& title, const std::string& message, const std::vector<std::string>& options, int selectedOption);
   void drawSignalInfo(const std::string& name, const std::string& protocol,
                       const std::string& address, const std::string& command,
@@ -27,7 +29,7 @@ public:
 
 private:
   void drawBackground();
-  void drawCenteredText(const std::string& text, int y, uint32_t color = TFT_WHITE);
-  void drawText(const std::string& text, int x, int y, uint32_t color = TFT_WHITE);
+  void drawCenteredText(const std::string& text, int y);
+  void drawText(const std::string& text, int x, int y);
   void fillRect(int x, int y, int w, int h, uint32_t color);
 };

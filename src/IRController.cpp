@@ -16,17 +16,20 @@ bool IRController::sendSignal(const Signal& signal) {
   }
 
   // Otherwise encode by protocol
-  if (signal.protocol == "NEC" || signal.protocol == "NECX" || signal.protocol == "NEC42") {
+  if (signal.protocol == "NEC" || signal.protocol == "NECX" || signal.protocol == "NEC42" || signal.protocol == "NECext") {
     uint16_t addr = static_cast<uint16_t>(strtoul(signal.address.c_str(), nullptr, 16));
     uint16_t cmd = static_cast<uint16_t>(strtoul(signal.command.c_str(), nullptr, 16));
     uint32_t data = irsend_.encodeNEC(addr, cmd);
     irsend_.sendNEC(data, 32);
     return true;
-  } else if (signal.protocol == "SONY") {
+  } else if (signal.protocol == "SONY" || signal.protocol == "SIRC" || signal.protocol == "SIRC15" || signal.protocol == "SIRC20") {
     uint64_t cmd = strtoul(signal.command.c_str(), nullptr, 16);
-    irsend_.sendSony(cmd, 12);
+    int bits = 12;
+    if (signal.protocol == "SIRC15") bits = 15;
+    else if (signal.protocol == "SIRC20") bits = 20;
+    irsend_.sendSony(cmd, bits);
     return true;
-  } else if (signal.protocol == "SAMSUNG" || signal.protocol == "SAMSUNG36" || signal.protocol == "SAMSUNGAC") {
+  } else if (signal.protocol == "SAMSUNG" || signal.protocol == "SAMSUNG36" || signal.protocol == "SAMSUNGAC" || signal.protocol == "Samsung32") {
     uint32_t addr = strtoul(signal.address.c_str(), nullptr, 16);
     uint32_t cmd = strtoul(signal.command.c_str(), nullptr, 16);
     uint64_t data = (static_cast<uint64_t>(addr) << 32) | cmd;
@@ -48,7 +51,7 @@ bool IRController::sendSignal(const Signal& signal) {
     uint64_t data = (static_cast<uint64_t>(addr) << 16) | cmd;
     irsend_.sendRC6(data, 20);
     return true;
-  } else if (signal.protocol == "PANASONIC" || signal.protocol == "PANASONIC_AC") {
+  } else if (signal.protocol == "PANASONIC" || signal.protocol == "PANASONIC_AC" || signal.protocol == "Kaseikyo") {
     uint16_t addr = static_cast<uint16_t>(strtoul(signal.address.c_str(), nullptr, 16));
     uint32_t cmd = static_cast<uint32_t>(strtoul(signal.command.c_str(), nullptr, 16));
     irsend_.sendPanasonic(addr, cmd, 48);

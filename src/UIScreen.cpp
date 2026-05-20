@@ -44,7 +44,7 @@ void UIScreen::drawFooter(const std::string& hint) {
   drawCenteredText(hint, SCREEN_HEIGHT - 6);
 }
 
-void UIScreen::drawMenu(const std::vector<std::string>& items, int selectedIndex, const std::string& title) {
+void UIScreen::drawMenu(int totalItems, int selectedIndex, std::function<std::string(int)> getItemText, const std::string& title) {
   // Clear content area with background
   fillRect(0, CONTENT_Y, SCREEN_WIDTH, CONTENT_H, COLOR_BG);
   // Redraw dots in content area
@@ -68,12 +68,12 @@ void UIScreen::drawMenu(const std::vector<std::string>& items, int selectedIndex
   
   int startIdx = selectedIndex - maxVisible / 2;
   if (startIdx < 0) startIdx = 0;
-  if (startIdx + maxVisible > static_cast<int>(items.size())) {
-    startIdx = static_cast<int>(items.size()) - maxVisible;
+  if (startIdx + maxVisible > totalItems) {
+    startIdx = totalItems - maxVisible;
     if (startIdx < 0) startIdx = 0;
   }
 
-  for (int i = 0; i < maxVisible && (startIdx + i) < static_cast<int>(items.size()); i++) {
+  for (int i = 0; i < maxVisible && (startIdx + i) < totalItems; i++) {
     int idx = startIdx + i;
     if (idx == selectedIndex) {
       M5.Display.fillRoundRect(2, y - 16, SCREEN_WIDTH - 4, lineHeight - 2, 4, COLOR_ACCENT);
@@ -83,13 +83,17 @@ void UIScreen::drawMenu(const std::vector<std::string>& items, int selectedIndex
     }
     
     // Draw text (limit length to prevent wrapping)
-    std::string text = items[idx];
+    std::string text = getItemText(idx);
     if (text.length() > 14) text = text.substr(0, 12) + "..";
     
     M5.Display.setCursor(8, y);
     M5.Display.print(text.c_str());
     y += lineHeight;
   }
+}
+
+void UIScreen::drawMenu(const std::vector<std::string>& items, int selectedIndex, const std::string& title) {
+  drawMenu(items.size(), selectedIndex, [&items](int idx) { return items[idx]; }, title);
 }
 
 void UIScreen::drawPopup(const std::string& title, const std::string& message,
@@ -181,15 +185,13 @@ void UIScreen::setBrightness(uint8_t percent) {
   M5.Display.setBrightness(level);
 }
 
-void UIScreen::drawCenteredText(const std::string& text, int y, uint32_t color) {
-  M5.Display.setTextColor(color);
+void UIScreen::drawCenteredText(const std::string& text, int y) {
   int16_t cx = (SCREEN_WIDTH - M5.Display.textWidth(text.c_str())) / 2;
   M5.Display.setCursor(cx > 0 ? cx : 0, y);
   M5.Display.print(text.c_str());
 }
 
-void UIScreen::drawText(const std::string& text, int x, int y, uint32_t color) {
-  M5.Display.setTextColor(color);
+void UIScreen::drawText(const std::string& text, int x, int y) {
   M5.Display.setCursor(x, y);
   M5.Display.print(text.c_str());
 }

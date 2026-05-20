@@ -12,7 +12,7 @@ namespace {
   int commandIndex = 0;
   
   unsigned long sendDisplayTime = 0;
-  bool isSending = false;
+  std::string sendStatusMsg = "";
 
   void drawDeviceSelect(UIScreen& ui, SignalStorage& storage) {
     ui.drawStatusBar("[B]", storage.getCount(), "CTRL");
@@ -38,7 +38,7 @@ namespace {
     }
     
     DeviceCommand cmd = activeProfile.commands[commandIndex];
-    std::string statusMsg = isSending ? "SENDING..." : "Ready";
+    std::string statusMsg = !sendStatusMsg.empty() ? sendStatusMsg : "Ready";
     ui.drawSignalInfo(activeProfile.brand, activeProfile.protocol, activeProfile.address, cmd.name, statusMsg);
     ui.drawFooter("SEND         NXT");
   }
@@ -50,13 +50,13 @@ namespace ControlMode {
     cState = CState::DEVICE_SELECT;
     savedProfiles = storage.getAllProfiles();
     deviceIndex = 0;
-    isSending = false;
+    sendStatusMsg = "";
     drawDeviceSelect(ui, storage);
   }
 
   void update(UIScreen& ui, SignalStorage& storage, IRController& ir) {
-    if (isSending && (millis() - sendDisplayTime > 500)) {
-      isSending = false;
+    if (!sendStatusMsg.empty() && (millis() - sendDisplayTime > 500)) {
+      sendStatusMsg = "";
       if (cState == CState::COMMAND_CYCLE) {
         drawCommandCycle(ui, storage);
       }
@@ -77,9 +77,9 @@ namespace ControlMode {
       s.address = activeProfile.address;
       s.command = cmd.hexCode;
       
-      ir.sendSignal(s);
+      bool success = ir.sendSignal(s);
       
-      isSending = true;
+      sendStatusMsg = success ? "SENDING..." : "Unsupported!";
       sendDisplayTime = millis();
       drawCommandCycle(ui, storage);
     }
