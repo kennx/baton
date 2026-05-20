@@ -36,8 +36,8 @@ namespace {
 
   void drawAbout(UIScreen& ui, SignalStorage& storage) {
     ui.drawStatusBar("[B]", storage.getCount(), "[S]About");
-    ui.drawSignalInfo("IR Scanner", "v1.0.0", "Sig:" + std::to_string(storage.getCount()),
-                      "Mem:" + std::to_string(storage.getCount()) + "/50", "Long:Back");
+    ui.drawSignalInfo("Baton Remote", "v2.0.0", "Dev:" + std::to_string(storage.getCount()),
+                      "Mem:" + std::to_string(storage.getCount()) + "/" + std::to_string(SignalStorage::MAX_PROFILES), "Long:Back");
     ui.drawFooter("Long:Back");
   }
 }

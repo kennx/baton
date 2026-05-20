@@ -8,8 +8,8 @@ class UIScreen {
 public:
   static constexpr int SCREEN_WIDTH = 135;
   static constexpr int SCREEN_HEIGHT = 240;
-  static constexpr int STATUS_BAR_H = 18;
-  static constexpr int FOOTER_H = 18;
+  static constexpr int STATUS_BAR_H = 24;
+  static constexpr int FOOTER_H = 24;
   static constexpr int CONTENT_Y = STATUS_BAR_H;
   static constexpr int CONTENT_H = SCREEN_HEIGHT - STATUS_BAR_H - FOOTER_H;
 
@@ -26,6 +26,7 @@ public:
   void setBrightness(uint8_t percent);
 
 private:
+  void drawBackground();
   void drawCenteredText(const std::string& text, int y, uint32_t color = TFT_WHITE);
   void drawText(const std::string& text, int x, int y, uint32_t color = TFT_WHITE);
   void fillRect(int x, int y, int w, int h, uint32_t color);

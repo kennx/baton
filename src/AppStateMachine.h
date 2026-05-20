@@ -5,12 +5,11 @@
 #include "IRController.h"
 
 enum class AppState {
-  MAIN_MENU,
-  SCAN_MODE,
-  CONTROL_MODE,
-  SIGNAL_MANAGER,
-  SETTINGS,
-  BRUTE_FORCE
+  MAIN_MENU = 0,
+  CONTROL_MODE = 1,
+  MATCH_MODE = 2,
+  SIGNAL_MANAGER = 3,
+  SETTINGS = 4
 };
 
 class AppStateMachine {
@@ -37,13 +36,13 @@ private:
   unsigned long btnBPressStart_ = 0;
   bool btnBLongHandled_ = false;
 
-  static constexpr const char* MENU_ITEMS[] = {"Scan", "Ctrl", "Mgmt", "Set", "Find"};
-  static constexpr int MENU_COUNT = 5;
+  static constexpr const char* MENU_ITEMS[] = {"Ctrl", "Match", "Mgmt", "Set"};
+  static constexpr int MENU_COUNT = 4;
   int menuIndex_ = 0;
 
   void handleMainMenu();
-  void handleScanMode();
   void handleControlMode();
+  void handleMatchMode();
   void handleSignalManager();
   void handleSettings();
 

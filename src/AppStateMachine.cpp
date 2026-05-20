@@ -1,9 +1,8 @@
 #include "AppStateMachine.h"
-#include "ScanMode.h"
 #include "ControlMode.h"
+#include "MatchMode.h"
 #include "SignalManager.h"
 #include "SettingsMode.h"
-#include "BruteForceMode.h"
 
 constexpr const char* AppStateMachine::MENU_ITEMS[AppStateMachine::MENU_COUNT];
 
@@ -24,20 +23,17 @@ void AppStateMachine::update() {
     case AppState::MAIN_MENU:
       handleMainMenu();
       break;
-    case AppState::SCAN_MODE:
-      handleScanMode();
-      break;
     case AppState::CONTROL_MODE:
       handleControlMode();
+      break;
+    case AppState::MATCH_MODE:
+      handleMatchMode();
       break;
     case AppState::SIGNAL_MANAGER:
       handleSignalManager();
       break;
     case AppState::SETTINGS:
       handleSettings();
-      break;
-    case AppState::BRUTE_FORCE:
-      BruteForceMode::update(ui_, storage_, ir_);
       break;
   }
 }
@@ -51,20 +47,17 @@ void AppStateMachine::changeState(AppState newState) {
       menuIndex_ = 0;
       drawMainMenu();
       break;
-    case AppState::SCAN_MODE:
-      ScanMode::enter(ui_, storage_, ir_);
-      break;
     case AppState::CONTROL_MODE:
       ControlMode::enter(ui_, storage_);
+      break;
+    case AppState::MATCH_MODE:
+      MatchMode::enter(ui_, storage_, ir_);
       break;
     case AppState::SIGNAL_MANAGER:
       SignalManager::enter(ui_, storage_);
       break;
     case AppState::SETTINGS:
       SettingsMode::enter(ui_, storage_);
-      break;
-    case AppState::BRUTE_FORCE:
-      BruteForceMode::enter(ui_, storage_, ir_);
       break;
   }
 }
@@ -115,11 +108,11 @@ void AppStateMachine::onBtnAShortPress() {
       menuIndex_ = (menuIndex_ + 1) % MENU_COUNT;
       drawMainMenu();
       break;
-    case AppState::SCAN_MODE:
-      ScanMode::onShortPress(ui_, storage_, ir_);
-      break;
     case AppState::CONTROL_MODE:
-      ControlMode::onShortPress(ui_, storage_);
+      ControlMode::onShortPress(ui_, storage_, ir_);
+      break;
+    case AppState::MATCH_MODE:
+      MatchMode::onShortPress(ui_, storage_, ir_);
       break;
     case AppState::SIGNAL_MANAGER:
       SignalManager::onShortPress(ui_, storage_);
@@ -127,24 +120,22 @@ void AppStateMachine::onBtnAShortPress() {
     case AppState::SETTINGS:
       SettingsMode::onShortPress(ui_, storage_);
       break;
-    case AppState::BRUTE_FORCE:
-      BruteForceMode::onShortPress(ui_, storage_, ir_);
-      break;
   }
 }
 
 void AppStateMachine::onBtnALongPress() {
   switch (state_) {
     case AppState::MAIN_MENU:
-      changeState(static_cast<AppState>(static_cast<int>(AppState::SCAN_MODE) + menuIndex_));
-      break;
-    case AppState::SCAN_MODE:
-      if (ScanMode::onLongPress(ui_, storage_, ir_)) {
-        changeState(AppState::MAIN_MENU);
-      }
+      // Controls mappings offset
+      changeState(static_cast<AppState>(static_cast<int>(AppState::CONTROL_MODE) + menuIndex_));
       break;
     case AppState::CONTROL_MODE:
       if (ControlMode::onLongPress(ui_, storage_, ir_)) {
+        changeState(AppState::MAIN_MENU);
+      }
+      break;
+    case AppState::MATCH_MODE:
+      if (MatchMode::onLongPress(ui_, storage_, ir_)) {
         changeState(AppState::MAIN_MENU);
       }
       break;
@@ -158,22 +149,17 @@ void AppStateMachine::onBtnALongPress() {
         changeState(AppState::MAIN_MENU);
       }
       break;
-    case AppState::BRUTE_FORCE:
-      if (BruteForceMode::onLongPress(ui_, storage_, ir_)) {
-        changeState(AppState::MAIN_MENU);
-      }
-      break;
   }
 }
 
 void AppStateMachine::onBtnBShortPress() {
   bool returnToMenu = false;
   switch (state_) {
-    case AppState::SCAN_MODE:
-      returnToMenu = ScanMode::onBtnBShortPress(ui_, storage_, ir_);
-      break;
     case AppState::CONTROL_MODE:
       returnToMenu = ControlMode::onBtnBShortPress(ui_, storage_);
+      break;
+    case AppState::MATCH_MODE:
+      returnToMenu = MatchMode::onBtnBShortPress(ui_, storage_, ir_);
       break;
     case AppState::SIGNAL_MANAGER:
       returnToMenu = SignalManager::onBtnBShortPress(ui_, storage_);
@@ -181,9 +167,8 @@ void AppStateMachine::onBtnBShortPress() {
     case AppState::SETTINGS:
       returnToMenu = SettingsMode::onBtnBShortPress(ui_, storage_);
       break;
-    case AppState::BRUTE_FORCE:
-      returnToMenu = BruteForceMode::onBtnBShortPress(ui_, storage_, ir_);
-      break;
+    case AppState::MAIN_MENU:
+      return;
   }
   if (returnToMenu) changeState(AppState::MAIN_MENU);
 }
@@ -191,11 +176,11 @@ void AppStateMachine::onBtnBShortPress() {
 void AppStateMachine::onBtnBLongPress() {
   bool returnToMenu = false;
   switch (state_) {
-    case AppState::SCAN_MODE:
-      returnToMenu = ScanMode::onBtnBLongPress(ui_, storage_, ir_);
-      break;
     case AppState::CONTROL_MODE:
       returnToMenu = ControlMode::onBtnBLongPress(ui_, storage_);
+      break;
+    case AppState::MATCH_MODE:
+      returnToMenu = MatchMode::onBtnBLongPress(ui_, storage_, ir_);
       break;
     case AppState::SIGNAL_MANAGER:
       returnToMenu = SignalManager::onBtnBLongPress(ui_, storage_);
@@ -203,9 +188,8 @@ void AppStateMachine::onBtnBLongPress() {
     case AppState::SETTINGS:
       returnToMenu = SettingsMode::onBtnBLongPress(ui_, storage_);
       break;
-    case AppState::BRUTE_FORCE:
-      returnToMenu = BruteForceMode::onBtnBLongPress(ui_, storage_, ir_);
-      break;
+    case AppState::MAIN_MENU:
+      return;
   }
   if (returnToMenu) changeState(AppState::MAIN_MENU);
 }
@@ -217,19 +201,19 @@ void AppStateMachine::drawMainMenu() {
   }
   ui_.drawStatusBar("[B]", storage_.getCount(), "MENU");
   ui_.drawMenu(items, menuIndex_);
-  ui_.drawFooter("Short:SEL Long:ENTR");
+  ui_.drawFooter("Short:NXT Long:ENTR");
 }
 
 void AppStateMachine::handleMainMenu() {
   // MENU handled in checkBtnA / onBtnAShortPress
 }
 
-void AppStateMachine::handleScanMode() {
-  ScanMode::update(ui_, storage_, ir_);
-}
-
 void AppStateMachine::handleControlMode() {
   ControlMode::update(ui_, storage_, ir_);
+}
+
+void AppStateMachine::handleMatchMode() {
+  MatchMode::update(ui_, storage_, ir_);
 }
 
 void AppStateMachine::handleSignalManager() {

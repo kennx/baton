@@ -1,9 +1,11 @@
 #pragma once
+
 #include "UIScreen.h"
 #include "SignalStorage.h"
 #include "IRController.h"
+#include "DeviceDatabase.h"
 
-namespace BruteForceMode {
+namespace MatchMode {
   void enter(UIScreen& ui, SignalStorage& storage, IRController& ir);
   void update(UIScreen& ui, SignalStorage& storage, IRController& ir);
   void onShortPress(UIScreen& ui, SignalStorage& storage, IRController& ir);
