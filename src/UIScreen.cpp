@@ -10,7 +10,7 @@ static constexpr uint16_t COLOR_HEADER = 0x2104; // Darker grey
 
 void UIScreen::init() {
   M5.Display.setRotation(0);  // 135x240
-  M5.Display.setTextFont(&fonts::FreeSans9pt7b);
+  M5.Display.setFont(&fonts::FreeSans9pt7b);
   M5.Display.setTextSize(1);
   clear();
 }
